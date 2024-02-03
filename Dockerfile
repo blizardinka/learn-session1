@@ -1,26 +1,29 @@
-name: Docker Image CI
+# Build the Vue.js frontend
+FROM node:14 as frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
 
-on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'game/**'
-      - 'Dockerfile'
-  # You can also trigger on pull_request, release, or other events
+# Build the Go backend
+FROM golang:1.18 as backend-builder
+WORKDIR /app
+COPY game/go.mod game/go.sum ./
+RUN go mod download
+COPY game/ .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Final stage: Put it all together
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
 
-    steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
+WORKDIR /root/
+COPY --from=backend-builder /app/server .
 
-    - name: Build Docker image
-      run: docker build -t myapp:latest .
+# Assuming the Go server serves static files from a "public" directory
+# Adjust the target directory depending on your server's static files location
+COPY --from=frontend-builder /app/frontend/dist /root/public
 
-    - name: Push Docker image to Registry
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push myapp:latest
+# Define the command to run the application
+CMD ["./server"]
