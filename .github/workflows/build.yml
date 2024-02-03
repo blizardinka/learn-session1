@@ -18,12 +18,10 @@ jobs:
     - name: Build Docker image
       run: docker build -t lepanto/todolang:${{ github.sha }} .
 
-     - name: Log in to Docker Hub
+    - name: Log in to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Push Docker image to Registry
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
     - name: Push the Docker image
-      run: docker push username/myapp:${{ github.sha }}
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: docker push lepanto/todolang:${{ github.sha }}
