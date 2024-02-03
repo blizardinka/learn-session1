@@ -16,10 +16,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build Docker image
-      run: docker build -t myapp:${{ github.sha }} .
+      run: docker build -t lepanto/todolang:latest .
 
     - name: Push Docker image to Registry
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push myapp:${{ github.sha }}
+        docker push lepanto/myapp:latest
