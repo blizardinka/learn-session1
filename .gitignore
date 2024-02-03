@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+vendor/
+
+# Compiled binary outputs
+/myapp
+/myapp.exe
+
+# Build outputs
+dist/
+build/
+out/
+
+# Environment files
+*.env
+*.env.local
+
+# IDE/Editor directories
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local databases
+*.db

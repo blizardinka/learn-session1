@@ -1,0 +1,1 @@
+Want that poeople go up after every win and scoreboard changing dynamicly
