@@ -9,7 +9,7 @@ RUN npm run build
 # Build the Go backend
 FROM golang:1.18 as backend-builder
 WORKDIR /app
-COPY game/go.mod game/go.sum ./
+COPY go.mod go.sum ./
 RUN go mod download
 COPY game/ .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
